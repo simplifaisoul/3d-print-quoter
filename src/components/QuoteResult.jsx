@@ -139,7 +139,7 @@ export default function QuoteResult({ quote, onProceedToCheckout, onRequestManua
                     </div>
                 )}
                 <div className="stat-card">
-                    <div className="stat-value">{materialWeight.toFixed(0)}g</div>
+                    <div className="stat-value">{materialWeight < 1 ? materialWeight.toFixed(1) : Math.round(materialWeight)}g</div>
                     <div className="stat-label">Est. Weight</div>
                 </div>
                 {isFDM && (
