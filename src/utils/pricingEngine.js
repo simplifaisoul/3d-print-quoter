@@ -45,7 +45,8 @@ export function calculateQuote({
             modelData.volumeCm3,
             layerHeight,
             infillPercent,
-            modelData.dimensions
+            modelData.dimensions,
+            modelData.surfaceAreaMm2 || (modelData.surfaceAreaCm2 ? modelData.surfaceAreaCm2 * 100 : null)
         )
 
         // Material weight in grams
