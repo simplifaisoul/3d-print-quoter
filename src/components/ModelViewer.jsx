@@ -1,5 +1,5 @@
-import { Suspense, useMemo, useRef, useEffect } from 'react'
-import { Canvas, useLoader, useThree } from '@react-three/fiber'
+import { useState, useRef, useEffect } from 'react'
+import { Canvas, useThree } from '@react-three/fiber'
 import { OrbitControls, ContactShadows, Center } from '@react-three/drei'
 import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
@@ -7,22 +7,50 @@ import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 function STLModel({ file }) {
     const { camera } = useThree()
     const meshRef = useRef()
+    const [geom, setGeom] = useState(null)
+    const [isLoading, setIsLoading] = useState(true)
 
-    const objectUrl = useMemo(() => {
-        if (!file) return null
-        return URL.createObjectURL(file)
+    // Load STL file manually to avoid Suspense/Object URL issues
+    useEffect(() => {
+        if (!file) return
+
+        setIsLoading(true)
+        const loader = new STLLoader()
+        const url = URL.createObjectURL(file)
+
+        loader.load(
+            url,
+            (geometry) => {
+                // Prepare geometry
+                geometry.computeBoundingBox()
+                geometry.center()
+                geometry.computeVertexNormals()
+
+                setGeom(geometry)
+                setIsLoading(false)
+
+                // Cleanup URL
+                setTimeout(() => URL.revokeObjectURL(url), 1000)
+            },
+            (xhr) => {
+                // Progress callback (optional)
+            },
+            (error) => {
+                console.error("Failed to load STL in 3D viewer:", error)
+                setIsLoading(false)
+                URL.revokeObjectURL(url)
+            }
+        )
+
+        return () => {
+            // Unmount cleanup
+            setGeom(null)
+        }
     }, [file])
 
-    const geom = useLoader(STLLoader, objectUrl || '')
-
+    // Auto-frame camera when geometry loads
     useEffect(() => {
         if (geom && meshRef.current) {
-            // Center and prepare geometry
-            geom.computeBoundingBox()
-            geom.center()
-            geom.computeVertexNormals()
-
-            // Auto-frame camera to fit model
             const box = new THREE.Box3().setFromObject(meshRef.current)
             const size = box.getSize(new THREE.Vector3())
             const maxDim = Math.max(size.x, size.y, size.z)
@@ -37,11 +65,14 @@ function STLModel({ file }) {
         }
     }, [geom, camera])
 
-    useEffect(() => {
-        return () => {
-            if (objectUrl) URL.revokeObjectURL(objectUrl)
-        }
-    }, [objectUrl])
+    if (isLoading) {
+        return (
+            <mesh rotation={[Math.PI / 4, Math.PI / 4, 0]}>
+                <torusGeometry args={[1, 0.1, 16, 32]} />
+                <meshStandardMaterial color="#00e5ff" emissive="#00e5ff" emissiveIntensity={0.5} wireframe />
+            </mesh>
+        )
+    }
 
     if (!geom) return null
 
@@ -54,15 +85,6 @@ function STLModel({ file }) {
                 roughness={0.3}
                 side={THREE.DoubleSide}
             />
-        </mesh>
-    )
-}
-
-function LoadingFallback() {
-    return (
-        <mesh rotation={[Math.PI / 4, Math.PI / 4, 0]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="#1a3a4a" />
         </mesh>
     )
 }
@@ -97,19 +119,17 @@ export default function ModelViewer({ file }) {
                 <directionalLight position={[-3, 5, -3]} intensity={0.6} color="#aaddff" />
                 <directionalLight position={[0, -3, 5]} intensity={0.3} color="#88bbff" />
 
-                <Suspense fallback={<LoadingFallback />}>
-                    <Center>
-                        <STLModel file={file} />
-                    </Center>
-                    <ContactShadows
-                        position={[0, -0.5, 0]}
-                        opacity={0.25}
-                        scale={20}
-                        blur={2}
-                        far={6}
-                        color="#003366"
-                    />
-                </Suspense>
+                <Center>
+                    <STLModel file={file} />
+                </Center>
+                <ContactShadows
+                    position={[0, -0.5, 0]}
+                    opacity={0.25}
+                    scale={20}
+                    blur={2}
+                    far={6}
+                    color="#003366"
+                />
 
                 <OrbitControls
                     enableDamping
