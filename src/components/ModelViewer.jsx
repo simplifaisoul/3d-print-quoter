@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Canvas, useThree } from '@react-three/fiber'
-import { OrbitControls, ContactShadows, Center } from '@react-three/drei'
+import { OrbitControls, ContactShadows, Center, Edges } from '@react-three/drei'
 import * as THREE from 'three'
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js'
 
