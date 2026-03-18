@@ -29,7 +29,6 @@ export function calculateQuote({
     isRush = false,
     shippingMethod = 'standard',
     infillPercent = 20,
-    layerHeight = 0.2,
 }) {
     const material = MATERIALS[materialId]
     if (!material) throw new Error(`Unknown material: ${materialId}`)
@@ -43,7 +42,7 @@ export function calculateQuote({
         // ─── FDM: Price by print time ───
         printTimeHours = estimateFDMPrintTime(
             modelData.volumeCm3,
-            layerHeight,
+            0.2,
             infillPercent,
             modelData.dimensions,
             modelData.surfaceAreaMm2 || (modelData.surfaceAreaCm2 ? modelData.surfaceAreaCm2 * 100 : null)

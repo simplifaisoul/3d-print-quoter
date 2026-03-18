@@ -25,7 +25,6 @@ export default function App() {
         materialId: 'fdm-pla',
         quantity: 1,
         infillPercent: 20,
-        layerHeight: 0.2,
         isRush: false,
         shippingMethod: 'standard',
     })
@@ -74,7 +73,6 @@ export default function App() {
                 isRush: config.isRush,
                 shippingMethod: config.shippingMethod,
                 infillPercent: config.infillPercent,
-                layerHeight: config.layerHeight,
             })
         } catch (err) {
             console.error('Quote calculation error:', err)

@@ -77,15 +77,36 @@ function STLModel({ file }) {
     if (!geom) return null
 
     return (
-        <mesh ref={meshRef} geometry={geom} castShadow receiveShadow>
-            <meshStandardMaterial
-                color="#00e5ff"
-                emissive="#004466"
-                metalness={0.2}
-                roughness={0.3}
-                side={THREE.DoubleSide}
-            />
-        </mesh>
+        <group>
+            {/* Solid sleek mesh using Physical material for realistic reflections */}
+            <mesh ref={meshRef} geometry={geom} castShadow receiveShadow>
+                <meshPhysicalMaterial
+                    color="#0f172a"
+                    emissive="#001122"
+                    metalness={0.5}
+                    roughness={0.4}
+                    clearcoat={0.8}
+                    clearcoatRoughness={0.2}
+                    side={THREE.DoubleSide}
+                />
+                {/* Crisp sharp edges for that clean AAA CAD look */}
+                <Edges
+                    linewidth={2}
+                    threshold={15}
+                    color="#00e5ff"
+                />
+            </mesh>
+            {/* Very subtle wireframe to give the "3D printed contour" feel the user requested */}
+            <mesh geometry={geom}>
+                <meshBasicMaterial
+                    color="#38bdf8"
+                    wireframe
+                    transparent
+                    opacity={0.08}
+                    depthWrite={false}
+                />
+            </mesh>
+        </group>
     )
 }
 

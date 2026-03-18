@@ -22,13 +22,12 @@ export default function QuoteCalculator({
             materialId: selectedMaterial,
             quantity,
             infillPercent: infill,
-            layerHeight,
             isRush,
             shippingMethod,
             ...updates,
         }
         onConfigChange(newConfig)
-    }, [selectedTech, selectedMaterial, quantity, infill, layerHeight, isRush, shippingMethod, onConfigChange])
+    }, [selectedTech, selectedMaterial, quantity, infill, isRush, shippingMethod, onConfigChange])
 
     const handleTechChange = (techId) => {
         const techMaterials = getMaterialsByTech(techId)
@@ -62,11 +61,6 @@ export default function QuoteCalculator({
         emitChange({ infillPercent: val })
     }
 
-    const handleLayerHeightChange = (e) => {
-        const val = parseFloat(e.target.value)
-        setLayerHeight(val)
-        emitChange({ layerHeight: val })
-    }
 
     const handleRushToggle = () => {
         setIsRush(!isRush)
@@ -172,20 +166,6 @@ export default function QuoteCalculator({
                                 </div>
                             </div>
 
-                            <div className="option-group">
-                                <div className="option-label">Layer Height</div>
-                                <select
-                                    className="option-input"
-                                    value={layerHeight}
-                                    onChange={handleLayerHeightChange}
-                                    id="layer-height-select"
-                                >
-                                    <option value={0.1}>0.10mm — Ultra Fine</option>
-                                    <option value={0.15}>0.15mm — Fine</option>
-                                    <option value={0.2}>0.20mm — Standard</option>
-                                    <option value={0.3}>0.30mm — Draft</option>
-                                </select>
-                            </div>
                         </>
                     )}
                 </div>
