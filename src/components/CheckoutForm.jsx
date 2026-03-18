@@ -1,6 +1,7 @@
 import { formatCurrency } from '../utils/pricingEngine'
+import ModelViewer from './ModelViewer'
 
-export default function CheckoutForm({ quote, onBack, onComplete }) {
+export default function CheckoutForm({ quote, file, onBack, onComplete }) {
 
     const handleCheckout = () => {
         // In production, this would create a Stripe Checkout session
@@ -30,6 +31,15 @@ export default function CheckoutForm({ quote, onBack, onComplete }) {
         <div className="card card-glow fade-in">
             <div className="card-title">💳 Order Summary</div>
             <div className="card-subtitle">Review your order before proceeding to payment</div>
+
+            {/* Model Preview */}
+            {file && (
+                <div style={{ marginBottom: 'var(--space-lg)' }}>
+                    <div style={{ height: '240px', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-color)', background: 'var(--bg-input)' }}>
+                        <ModelViewer file={file} />
+                    </div>
+                </div>
+            )}
 
             {/* Order Details */}
             <div style={{

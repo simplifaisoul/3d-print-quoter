@@ -308,6 +308,7 @@ export default function App() {
                     <div className="fade-in" style={{ maxWidth: '600px', margin: '0 auto' }}>
                         <CheckoutForm
                             quote={quote}
+                            file={file}
                             onBack={() => setCurrentStep(2)}
                             onComplete={handleCheckoutComplete}
                         />
